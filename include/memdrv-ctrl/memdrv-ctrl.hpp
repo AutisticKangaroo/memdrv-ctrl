@@ -6,6 +6,8 @@
 namespace memdrv {
     bool initialize();
 
+    bool loaded();
+
     bool map_physical(uint32_t pid, uint64_t address, size_t size, uint64_t* view);
     bool unmap_physical(uint32_t pid, uint64_t view);
 

@@ -9,7 +9,8 @@
 
 namespace memdrv {
     enum class dispatch_id : uint32_t {
-        map_physical = 0,
+        info = 0,
+        map_physical,
         unmap_physical,
         copy_virtual_memory
     };
@@ -21,6 +22,11 @@ namespace memdrv {
         uint32_t syscall;
         uint64_t arguments;
         uint64_t success;
+    };
+
+    struct info_packet_t {
+        uint64_t base;
+        uint64_t entry;
     };
 
     struct map_physical_packet_t {
@@ -87,6 +93,15 @@ namespace memdrv {
         );
 
         return success;
+    }
+
+    bool loaded() {
+        info_packet_t packet { };
+
+        if (!call_driver(dispatch_id::info, &packet))
+            return false;
+
+        return packet.base != 0;
     }
 
     bool map_physical(uint32_t pid, uint64_t address, size_t size, uint64_t* view) {
